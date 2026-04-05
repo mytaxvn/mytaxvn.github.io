@@ -1,0 +1,7 @@
+.idea/
+bin/
+obj/
+/node_modules/
+/fable_modules/
+/dist/
+*.fs.js

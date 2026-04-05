@@ -1,0 +1,1 @@
+dotnet serve -d dist -p 12345 -o -q -a any

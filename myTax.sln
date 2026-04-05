@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "App", "App.fsproj", "{20AE0087-0B38-4310-83EA-E2D54B1E4BF4}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Test", "Test\Test.fsproj", "{FE140436-B811-453B-868A-C62858CF383A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core", "Core\Core.fsproj", "{88978F36-1489-45E2-A2BB-F783FE2FF3DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20AE0087-0B38-4310-83EA-E2D54B1E4BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AE0087-0B38-4310-83EA-E2D54B1E4BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20AE0087-0B38-4310-83EA-E2D54B1E4BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20AE0087-0B38-4310-83EA-E2D54B1E4BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE140436-B811-453B-868A-C62858CF383A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE140436-B811-453B-868A-C62858CF383A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE140436-B811-453B-868A-C62858CF383A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE140436-B811-453B-868A-C62858CF383A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88978F36-1489-45E2-A2BB-F783FE2FF3DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88978F36-1489-45E2-A2BB-F783FE2FF3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88978F36-1489-45E2-A2BB-F783FE2FF3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88978F36-1489-45E2-A2BB-F783FE2FF3DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
