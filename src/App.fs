@@ -277,7 +277,7 @@ let view dispatch (model: Model) =
                 match src.totalIncome with Ok n -> " (" + formatNumber n + ")" | Error _ -> ""
             Html.summary $"{index + 1}. {companyName}{totalIncomeSuffix}"
             Html.p [
-                Html.label "Công ty"
+                Html.label "Tên công ty"
                 Html.input [
                     prop.type'.text
                     prop.value src.companyName
@@ -366,7 +366,6 @@ let view dispatch (model: Model) =
         match model.result with
         | None -> Html.none
         | Some res ->
-
             let thRight (text: string) = Html.th [
                 prop.style [ style.textAlign.right ]
                 prop.text text

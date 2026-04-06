@@ -6,6 +6,8 @@
         <Compile Include="src\Extentions.fs" />
         <Compile Include="src\App.fs"/>
         <Content Include="index.html"/>
+        <Content Include="public\favicon.ico" />
+        <Content Include="public\main.css" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Fastoch" Version="0.13.0" />
