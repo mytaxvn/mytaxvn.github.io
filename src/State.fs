@@ -12,7 +12,8 @@ module MoneyInput =
         if String.IsNullOrWhiteSpace str then
             zero
         else
-            match tryParseInt64 str with
+            let cleaned = str.Replace(".", "").Replace(",", "").Replace("_", "")
+            match tryParseInt64 cleaned with
             | Some n -> Ok n
             | None -> Error str
 
