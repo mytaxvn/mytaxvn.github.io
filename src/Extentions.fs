@@ -25,7 +25,7 @@ type Result<'a,'b> with
 let roundInt64 (x: float) =
     x |> Math.Round |> int64
 
-type NumberFormat =
+type private NumberFormat =
     abstract format: int64 -> string
 
 [<Emit("new Intl.NumberFormat('vi-VN')")>]
