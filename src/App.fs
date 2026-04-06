@@ -1,16 +1,10 @@
 module App
 
 open System
-open Fable.Core
 open Fastoch.Feliz
 open Fastoch.Elmish
 
 type MoneyInput = Result<int64, string>
-
-let private roundInt64 (x: float) = x |> Math.Round |> int64
-
-[<Emit("new Intl.NumberFormat('vi-VN').format($0)")>]
-let private formatNumber (_value: int64) : string = jsNative
 
 module MoneyInput =
     let zero : MoneyInput = Ok 0
@@ -88,7 +82,7 @@ type Model = {
                 this.setting.dependentDeductionPerMonth
             } |> Results.allOk
 
-    member this.Profile : Core.Profile = {
+    member this.CoreProfile: Core.Profile = {
         sources =
             this.sources
             |> List.map (fun src ->
@@ -240,7 +234,7 @@ let update (msg: Msg) (model: Model) =
         if not model.IsInputOk then
             { model with result = None }
         else
-            let result = Core.calculate model.CoreSetting model.Profile
+            let result = Core.calculate model.CoreSetting model.CoreProfile
             { model with result = Some result }
 
 let view dispatch (model: Model) =

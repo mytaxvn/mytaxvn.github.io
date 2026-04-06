@@ -1,6 +1,8 @@
 [<AutoOpen>]
 module Extentions
 
+open System
+open Fable.Core
 open Fastoch.Feliz
 
 type Html with
@@ -19,3 +21,17 @@ type Result<'a,'b> with
         match this with
         | Ok value -> value
         | Error _ -> failwith "OOPS"
+
+let roundInt64 (x: float) =
+    x |> Math.Round |> int64
+
+type NumberFormat =
+    abstract format: int64 -> string
+
+[<Emit("new Intl.NumberFormat('vi-VN')")>]
+let private createFormatter (): NumberFormat = jsNative
+
+let private formatter = createFormatter()
+
+let formatNumber (value: int64) =
+    formatter.format(value)
