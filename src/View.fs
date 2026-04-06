@@ -91,19 +91,20 @@ let private renderDependent dispatch (index: int) (dep: Dependent) =
     ]
 
 let private renderSetting dispatch (setting: Setting) = [
+    let button std styles =
+        let label = match std with Std2025 -> "2025" | Std2026 -> "2026"
+        let selected = setting.IsOfStd std
+        let prefix = if selected then "✓ " else ""
+        Html.button [
+            prop.text (prefix + label)
+            prop.onClick (fun _ -> dispatch (UseStandardSeting std))
+            prop.disabled selected
+            prop.style styles
+        ]
     Html.h3 "Thông số"
     Html.p [
-        Html.button [
-            prop.text "2025"
-            prop.onClick (fun _ -> dispatch (UseStandardSeting Std2025))
-            prop.disabled (setting.IsOfStd Std2025)
-        ]
-        Html.button [
-            prop.text "2026"
-            prop.onClick (fun _ -> dispatch (UseStandardSeting Std2026))
-            prop.disabled (setting.IsOfStd Std2026)
-            prop.style [ style.marginLeft (length.px 10) ]
-        ]
+        button Std2025 []
+        button Std2026 [ style.marginLeft (length.px 10) ]
     ]
     Html.p [
         Html.label "Giảm trừ bản thân mỗi tháng"
