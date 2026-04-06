@@ -20,7 +20,7 @@ let private renderMonthSelection (label: string) (selected: int) (onChange: int 
 let private renderMoneyInput (mi: MoneyInput) (onChange: string -> unit) =
     let value, styles =
         match mi with
-        | Ok value -> formatNumber value, []
+        | Ok n -> formatNumber n, []
         | Error value -> value, [ style.borderColor.red; style.color.red ]
     Html.input [
         prop.type'.text
@@ -32,38 +32,39 @@ let private renderMoneyInput (mi: MoneyInput) (onChange: string -> unit) =
 let private renderIncomeSource dispatch (canDelete: bool) (index: int) (src: IncomeSource) =
     Html.details [
         let companyName =
-            if String.IsNullOrWhiteSpace src.companyName then $"Công ty {index + 1}" else src.companyName
+            if String.IsNullOrWhiteSpace src.companyName
+            then $"Công ty {index + 1}"
+            else src.companyName
         let totalIncomeSuffix =
-            match src.totalIncome with Ok n -> " (" + formatNumber n + ")" | Error _ -> ""
+            match src.totalIncome with
+            | Ok n -> $" ({formatNumber n})"
+            | Error _ -> ""
         Html.summary $"{index + 1}. {companyName}{totalIncomeSuffix}"
         Html.p [
             Html.label "Tên công ty"
             Html.input [
                 prop.type'.text
                 prop.value src.companyName
-                prop.onChange (fun name -> dispatch (ChangeCompanyName (index, name)))
+                prop.onChange (tup index >> ChangeCompanyName >> dispatch)
             ]
         ]
         Html.p [
             Html.label "Tổng thu nhập"
-            renderMoneyInput src.totalIncome (fun value -> dispatch (ChangeTotalIncome (index, value)))
+            renderMoneyInput src.totalIncome (tup index >> ChangeTotalIncome >> dispatch)
         ]
-        renderMonthSelection "Tháng bắt đầu" src.beginMonth
-            (fun value -> dispatch (ChangeIncomeSourceBeginMonth (index, value)))
-        renderMonthSelection "Tháng kết thúc" src.endMonth
-            (fun value -> dispatch (ChangeIncomeSourceEndMonth (index, value)))
+        renderMonthSelection "Tháng bắt đầu" src.beginMonth (tup index >> ChangeIncomeSourceBeginMonth >> dispatch)
+        renderMonthSelection "Tháng kết thúc" src.endMonth (tup index >> ChangeIncomeSourceEndMonth >> dispatch)
         Html.p [
             Html.label "Bảo hiểm được trừ"
-            renderMoneyInput src.insuranceDeduction
-                (fun value -> dispatch (ChangeInsuranceDeduction (index, value)))
+            renderMoneyInput src.insuranceDeduction (tup index >> ChangeInsuranceDeduction >> dispatch)
         ]
         Html.p [
             Html.label "Được trừ khác (từ thiện...)"
-            renderMoneyInput src.otherDeduction (fun value -> dispatch (ChangeOtherDeduction (index, value)))
+            renderMoneyInput src.otherDeduction (tup index >> ChangeOtherDeduction >> dispatch)
         ]
         Html.p [
             Html.label "Số thuế đã khấu trừ"
-            renderMoneyInput src.withhold (fun value -> dispatch (ChangeWithhold (index, value)))
+            renderMoneyInput src.withhold (tup index >> ChangeWithhold >> dispatch)
         ]
         Html.button [
             prop.text "❌ Xóa"
@@ -81,13 +82,11 @@ let private renderDependent dispatch (index: int) (dep: Dependent) =
             Html.input [
                 prop.type'.text
                 prop.value dep.name
-                prop.onChange (fun name -> dispatch (ChangeDependentName (index, name)))
+                prop.onChange (tup index >> ChangeDependentName >> dispatch)
             ]
         ]
-        renderMonthSelection "Tháng bắt đầu" dep.beginMonth
-            (fun value -> dispatch (ChangeDependentBeginMonth (index, value)))
-        renderMonthSelection "Tháng kết thúc" dep.endMonth
-            (fun value -> dispatch (ChangeDependentEndMonth (index, value)))
+        renderMonthSelection "Tháng bắt đầu" dep.beginMonth (tup index >> ChangeDependentBeginMonth >> dispatch)
+        renderMonthSelection "Tháng kết thúc" dep.endMonth (tup index >> ChangeDependentEndMonth >> dispatch)
         Html.button [ prop.text "❌ Xóa"; prop.onClick (fun _ -> dispatch (DeleteDependent index)) ]
     ]
 
@@ -145,15 +144,13 @@ let private renderResult (res: Core.TaxResult) =
                 tdRight (formatNumber res.withhold)
                 Html.td "[8]"
             ]
-            let pay = res.pay |> roundInt64
-            if pay >= 0 then
-                Html.tr [
+            Html.tr [
+                let pay = res.pay |> roundInt64
+                if pay >= 0 then
                     Html.td "❌ Số thuế còn thiếu"; tdRight (formatNumber pay); Html.td "[9] = [7]-[8]"
-                ]
-            else
-                Html.tr [
+                else
                     Html.td "✅ Số thuế được hoàn"; tdRight (formatNumber -pay); Html.td "[9] = [8]-[7]"
-                ]
+            ]
         ]
     ]
 
@@ -173,11 +170,11 @@ let render dispatch (model: Model) =
         Html.h3 "Thông số"
         Html.p [
             Html.label "Giảm trừ bản thân mỗi tháng"
-            renderMoneyInput model.setting.personalDeductionPerMonth (dispatch << ChangePersonalDeductionPerMonth)
+            renderMoneyInput model.setting.personalDeductionPerMonth (ChangePersonalDeductionPerMonth >> dispatch)
         ]
         Html.p [
             Html.label "Giảm trừ người phụ thuộc mỗi tháng"
-            renderMoneyInput model.setting.dependentDeductionPerMonth (dispatch << ChangeDependentPerMonth)
+            renderMoneyInput model.setting.dependentDeductionPerMonth (ChangeDependentPerMonth >> dispatch)
         ]
 
         Html.hr []

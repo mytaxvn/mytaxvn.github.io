@@ -77,6 +77,7 @@ let update (msg: Msg) (model: Model) =
                     model.dependents
                     |> List.changeAt index (fun dep -> { dep with name = name })
             }
+
     | ChangeDependentBeginMonth (index, value)
     | ChangeDependentEndMonth (index, value) ->
         if index < 0 || index >= model.dependents.Length || value < 1 || value > 12 then model

@@ -35,3 +35,5 @@ let private formatter = createFormatter()
 
 let formatNumber (value: int64) =
     formatter.format(value)
+
+let tup a b = (a, b)
