@@ -36,4 +36,15 @@ let private formatter = createFormatter()
 let formatNumber (value: int64) =
     formatter.format(value)
 
+[<Emit("parseInt($0.replace(/[\\.,_]/g, ''), 10)")>]
+let private parseIntJs (_input: string) : float = jsNative
+
+let tryParseInt64 (input: string) : int64 option =
+    try
+        let v = parseIntJs input
+        if JS.isNaN v then None
+        else Some (roundInt64 v)
+    with _ ->
+        None
+
 let tup a b = (a, b)

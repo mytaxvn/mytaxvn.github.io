@@ -17,11 +17,11 @@ let private renderMonthSelection (label: string) (selected: int) (onChange: int 
         ]
     ]
 
-let private renderMoneyInput (mi: MoneyInput) (onChange: string -> unit) =
+let private renderMoneyInput (input: MoneyInput) (onChange: string -> unit) =
     let value, styles =
-        match mi with
+        match input with
         | Ok n -> formatNumber n, []
-        | Error value -> value, [ style.borderColor.red; style.color.red ]
+        | Error str -> str, [ style.borderColor.red; style.color.red ]
     Html.input [
         prop.type'.text
         prop.value value
@@ -90,10 +90,10 @@ let private renderDependent dispatch (index: int) (dep: Dependent) =
         Html.button [ prop.text "❌ Xóa"; prop.onClick (fun _ -> dispatch (DeleteDependent index)) ]
     ]
 
-let private renderSetting dispatch (setting: Setting) = [
+let private renderSetting dispatch (setting: Setting) (currentStd: Std option) = [
     let button std styles =
         let label = match std with Std2025 -> "2025" | Std2026 -> "2026"
-        let selected = setting.IsOfStd std
+        let selected = currentStd = Some std
         let prefix = if selected then "✓ " else ""
         Html.button [
             prop.text (prefix + label)
@@ -112,7 +112,7 @@ let private renderSetting dispatch (setting: Setting) = [
     ]
     Html.p [
         Html.label "Giảm trừ người phụ thuộc mỗi tháng"
-        renderMoneyInput setting.dependentDeductionPerMonth (ChangeDependentPerMonth >> dispatch)
+        renderMoneyInput setting.dependentDeductionPerMonth (ChangeDependentDeductionPerMonth >> dispatch)
     ]
 ]
 
@@ -161,6 +161,7 @@ let private renderResult (res: Core.TaxResult) =
                     Html.a [
                         prop.href "https://thuvienphapluat.vn/chinh-sach-phap-luat-moi/vn/ho-tro-phap-luat/chinh-sach-moi/82461/thue-thu-nhap-ca-nhan-2025-muc-dong-va-cach-tinh-thue-tu-tien-luong-tien-cong"
                         prop.text " Tính"
+                        prop.target.blank
                     ]
                     Html.span " trên [6]"
                 ]
@@ -193,16 +194,15 @@ let render dispatch (model: Model) =
             yield! model.dependents |> List.mapi (renderDependent dispatch)
         Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddDependent) ]
 
-        yield! renderSetting dispatch model.setting
+        yield! renderSetting dispatch model.setting model.currentStd
 
         Html.hr []
-        Html.button [
-            prop.text "🚀 Tính thuế"
-            prop.disabled (not model.IsInputOk)
-            prop.onClick (fun _ -> dispatch Calculate)
-        ]
-
+        Html.h3 "🚀 Kết quả"
         match model.result with
-        | None -> Html.none
+        | None ->
+            Html.p [
+                prop.text "Có lỗi trong phần nhập liệu phía trên."
+                prop.style [ style.color.red ]
+            ]
         | Some res -> renderResult res
     ]
