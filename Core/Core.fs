@@ -18,9 +18,13 @@ type Setting = {
     personalDeductionPerMonth: int64
     dependentDeductionPerMonth: int64
 } with
-    static member defaultValue = {
+    static member default2025 = {
         personalDeductionPerMonth = 11_000_000
         dependentDeductionPerMonth = 4_400_000
+    }
+    static member default2026 = {
+        personalDeductionPerMonth = 15_500_000
+        dependentDeductionPerMonth = 6_200_000
     }
 
 type Profile = {

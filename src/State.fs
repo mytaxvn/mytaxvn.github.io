@@ -5,7 +5,7 @@ open Types
 let init () : Model = {
     sources = [ IncomeSource.defaultValue ]
     dependents = []
-    setting = Setting.defaultValue
+    setting = Setting.create Core.Setting.default2025
     result = None
 }
 
@@ -103,6 +103,11 @@ let update (msg: Msg) (model: Model) =
         { model with
             setting.dependentDeductionPerMonth = MoneyInput.parse value
         }
+
+    | UseStandardSeting std ->
+        match std with
+        | Std2025 -> { model with setting = Setting.create Core.Setting.default2025 }
+        | Std2026 -> { model with setting = Setting.create Core.Setting.default2026 }
 
     | Calculate ->
         if not model.IsInputOk then

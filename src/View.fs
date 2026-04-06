@@ -90,6 +90,31 @@ let private renderDependent dispatch (index: int) (dep: Dependent) =
         Html.button [ prop.text "❌ Xóa"; prop.onClick (fun _ -> dispatch (DeleteDependent index)) ]
     ]
 
+let private renderSetting dispatch (setting: Setting) = [
+    Html.h3 "Thông số"
+    Html.p [
+        Html.button [
+            prop.text "2025"
+            prop.onClick (fun _ -> dispatch (UseStandardSeting Std2025))
+            prop.disabled (setting.IsOfStd Std2025)
+        ]
+        Html.button [
+            prop.text "2026"
+            prop.onClick (fun _ -> dispatch (UseStandardSeting Std2026))
+            prop.disabled (setting.IsOfStd Std2026)
+            prop.style [ style.marginLeft (length.px 10) ]
+        ]
+    ]
+    Html.p [
+        Html.label "Giảm trừ bản thân mỗi tháng"
+        renderMoneyInput setting.personalDeductionPerMonth (ChangePersonalDeductionPerMonth >> dispatch)
+    ]
+    Html.p [
+        Html.label "Giảm trừ người phụ thuộc mỗi tháng"
+        renderMoneyInput setting.dependentDeductionPerMonth (ChangeDependentPerMonth >> dispatch)
+    ]
+]
+
 let private renderResult (res: Core.TaxResult) =
     let tdRight (text: string) = Html.td [
         prop.style [ style.textAlign.right ]
@@ -167,15 +192,7 @@ let render dispatch (model: Model) =
             yield! model.dependents |> List.mapi (renderDependent dispatch)
         Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddDependent) ]
 
-        Html.h3 "Thông số"
-        Html.p [
-            Html.label "Giảm trừ bản thân mỗi tháng"
-            renderMoneyInput model.setting.personalDeductionPerMonth (ChangePersonalDeductionPerMonth >> dispatch)
-        ]
-        Html.p [
-            Html.label "Giảm trừ người phụ thuộc mỗi tháng"
-            renderMoneyInput model.setting.dependentDeductionPerMonth (ChangeDependentPerMonth >> dispatch)
-        ]
+        yield! renderSetting dispatch model.setting
 
         Html.hr []
         Html.button [

@@ -49,14 +49,29 @@ type Dependent = {
         endMonth = 12
     }
 
+type Standard =
+    | Std2025
+    | Std2026
+
 type Setting = {
     personalDeductionPerMonth: MoneyInput
     dependentDeductionPerMonth: MoneyInput
 } with
-    static member defaultValue = {
-        personalDeductionPerMonth = Ok 11_000_000
-        dependentDeductionPerMonth = Ok 4_400_000
+    static member create (core: Core.Setting) = {
+        personalDeductionPerMonth = Ok core.personalDeductionPerMonth
+        dependentDeductionPerMonth = Ok core.dependentDeductionPerMonth
     }
+    member this.IsOfStd (std: Standard) =
+        match this.personalDeductionPerMonth, this.dependentDeductionPerMonth with
+        | Ok personalDeductionPerMonth, Ok dependentDeductionPerMonth ->
+            let core =
+                match std with
+                | Std2025 -> Core.Setting.default2025
+                | Std2026 -> Core.Setting.default2026
+            personalDeductionPerMonth = core.personalDeductionPerMonth
+            && dependentDeductionPerMonth = core.dependentDeductionPerMonth
+        | _ ->
+            false
 
 type Model = {
     sources: IncomeSource list
@@ -118,6 +133,7 @@ type Msg =
     | ChangeInsuranceDeduction of index: int * value: string
     | ChangeOtherDeduction of index: int * value: string
     | ChangeWithhold of index: int * value: string
+
     | AddDependent
     | DeleteDependent of index: int
     | ChangeDependentName of index: int * name: string
@@ -125,4 +141,7 @@ type Msg =
     | ChangeDependentEndMonth of index: int * value: int
     | ChangePersonalDeductionPerMonth of value: string
     | ChangeDependentPerMonth of value: string
+
+    | UseStandardSeting of Standard
+
     | Calculate
