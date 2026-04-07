@@ -94,7 +94,7 @@ module Model =
 
     let calculate (model: Model) =
         { model with
-            currentStd =
+            selectedStd =
                 if model.setting = Setting.default2025 then Some Std2025
                 elif model.setting = Setting.default2026 then Some Std2026
                 else None
@@ -111,7 +111,7 @@ let init () =
         sources = [ IncomeSource.defaultValue ]
         dependents = []
         setting = Setting.default2025
-        currentStd = Some Std2025
+        selectedStd = None
         result = None
     }
     |> Model.calculate

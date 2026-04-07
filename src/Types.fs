@@ -31,7 +31,7 @@ type Model = {
     sources: IncomeSource list
     dependents: Dependent list
     setting: Setting
-    currentStd: Std option
+    selectedStd: Std option
     result: Core.TaxResult option
 }
 

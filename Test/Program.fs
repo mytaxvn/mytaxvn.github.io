@@ -16,7 +16,7 @@
     ]
 }
 
-let setting = Core.Setting.defaultValue
+let setting = Core.Setting.default2025
 
 let res = Core.calculate setting profile
 printfn "%A" res

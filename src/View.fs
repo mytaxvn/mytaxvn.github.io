@@ -90,10 +90,10 @@ let private renderDependent dispatch (index: int) (dep: Dependent) =
         Html.button [ prop.text "❌ Xóa"; prop.onClick (fun _ -> dispatch (DeleteDependent index)) ]
     ]
 
-let private renderSetting dispatch (setting: Setting) (currentStd: Std option) = [
+let private renderSetting dispatch (setting: Setting) (selectedStd: Std option) = [
     let button std styles =
         let label = match std with Std2025 -> "2025" | Std2026 -> "2026"
-        let selected = currentStd = Some std
+        let selected = selectedStd = Some std
         let prefix = if selected then "✓ " else ""
         Html.button [
             prop.text (prefix + label)
@@ -199,7 +199,7 @@ let render dispatch (model: Model) =
 
         Html.article [
             Html.h3 "Thông số"
-            yield! renderSetting dispatch model.setting model.currentStd
+            yield! renderSetting dispatch model.setting model.selectedStd
         ]
 
         Html.article [
