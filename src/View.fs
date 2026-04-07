@@ -21,7 +21,7 @@ let private renderMoneyInput (input: MoneyInput) (onChange: string -> unit) =
     let value, styles =
         match input with
         | Ok n -> formatNumber n, []
-        | Error str -> str, [ style.borderColor.red; style.color.red ]
+        | Error str -> str, [ style.color.red ]
     Html.input [
         prop.type'.text
         prop.value value
@@ -101,7 +101,6 @@ let private renderSetting dispatch (setting: Setting) (currentStd: Std option) =
             prop.disabled selected
             prop.style styles
         ]
-    Html.h3 "Thông số"
     Html.p [
         button Std2025 []
         button Std2026 [ style.marginLeft (length.px 10) ]
@@ -183,26 +182,34 @@ let private renderResult (res: Core.TaxResult) =
 
 let render dispatch (model: Model) =
     Html.main [
-        Html.h3 "Nguồn thu nhập"
-        yield! model.sources |> List.mapi (renderIncomeSource dispatch (model.sources.Length > 1))
-        Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddIncomeSource) ]
+        Html.article [
+            Html.h3 "Nguồn thu nhập"
+            yield! model.sources |> List.mapi (renderIncomeSource dispatch (model.sources.Length > 1))
+            Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddIncomeSource) ]
+        ]
 
-        Html.h3 "Người phụ thuộc"
-        if model.dependents.IsEmpty then
-            Html.p [ prop.text "Không có người phụ thuộc nào"; prop.style [ style.fontStyle.italic ] ]
-        else
-            yield! model.dependents |> List.mapi (renderDependent dispatch)
-        Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddDependent) ]
+        Html.article [
+            Html.h3 "Người phụ thuộc"
+            if model.dependents.IsEmpty then
+                Html.p [ prop.text "Không có người phụ thuộc nào"; prop.style [ style.fontStyle.italic ] ]
+            else
+                yield! model.dependents |> List.mapi (renderDependent dispatch)
+            Html.button [ prop.text "＋ Thêm"; prop.onClick (fun _ -> dispatch AddDependent) ]
+        ]
 
-        yield! renderSetting dispatch model.setting model.currentStd
+        Html.article [
+            Html.h3 "Thông số"
+            yield! renderSetting dispatch model.setting model.currentStd
+        ]
 
-        Html.hr []
-        Html.h3 "🚀 Kết quả"
-        match model.result with
-        | None ->
-            Html.p [
-                prop.text "Có lỗi trong phần nhập liệu phía trên."
-                prop.style [ style.color.red ]
-            ]
-        | Some res -> renderResult res
+        Html.article [
+            Html.h3 "🚀 Kết quả"
+            match model.result with
+            | None ->
+                Html.p [
+                    prop.text "Có lỗi trong phần nhập liệu phía trên. Vui lòng nhập lại."
+                    prop.style [ style.color.red; style.fontStyle.italic ]
+                ]
+            | Some res -> renderResult res
+        ]
     ]
