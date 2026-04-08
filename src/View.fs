@@ -35,11 +35,13 @@ let private renderIncomeSource dispatch (canDelete: bool) (index: int) (src: Inc
             if String.IsNullOrWhiteSpace src.companyName
             then $"Công ty {index + 1}"
             else src.companyName
-        let totalIncomeSuffix =
+        let totalIncome =
             match src.totalIncome with
             | Ok n -> $" ({formatNumber n})"
             | Error _ -> ""
-        Html.summary $"{index + 1}. {companyName}{totalIncomeSuffix}"
+        let monthRange =
+            $"T{src.beginMonth}-T{src.endMonth}"
+        Html.summary $"{index + 1}. {companyName}{totalIncome} {monthRange}"
         Html.p [
             Html.label "Tên công ty"
             Html.input [
@@ -76,7 +78,7 @@ let private renderIncomeSource dispatch (canDelete: bool) (index: int) (src: Inc
 let private renderDependent dispatch (index: int) (dep: Dependent) =
     Html.details [
         let name = if String.IsNullOrWhiteSpace dep.name then $"NPT {index + 1}" else dep.name
-        Html.summary $"{index + 1}. {name} ({dep.beginMonth}-{dep.endMonth})"
+        Html.summary $"{index + 1}. {name} (T{dep.beginMonth}-T{dep.endMonth})"
         Html.p [
             Html.label "Tên"
             Html.input [
