@@ -53,4 +53,4 @@ type Msg =
     | ChangeDependentEndMonth of index: int * value: int
     | ChangePersonalDeductionPerMonth of value: string
     | ChangeDependentDeductionPerMonth of value: string
-    | UseStandardSeting of Std
+    | UseStdSetting of Std

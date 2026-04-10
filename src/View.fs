@@ -99,7 +99,7 @@ let private renderSetting dispatch (setting: Setting) (selectedStd: Std option) 
         let prefix = if selected then "✓ " else ""
         Html.button [
             prop.text (prefix + label)
-            prop.onClick (fun _ -> dispatch (UseStandardSeting std))
+            prop.onClick (fun _ -> dispatch (UseStdSetting std))
             prop.disabled selected
             prop.style styles
         ]

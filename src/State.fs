@@ -210,7 +210,7 @@ let private update' (msg: Msg) (model: Model) =
         { model with
             setting.dependentDeductionPerMonth = MoneyInput.parse value }
 
-    | UseStandardSeting std ->
+    | UseStdSetting std ->
         match std with
         | Std2025 -> { model with setting = Setting.default2025 }
         | Std2026 -> { model with setting = Setting.default2026 }
