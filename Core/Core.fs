@@ -32,6 +32,11 @@ type Profile = {
     dependents: Dependent list
 }
 
+type PayResult =
+    | NothingToDo of int64
+    | PayMore of int64
+    | PayBack of int64
+
 type TaxResult = {
     totalIncome: int64
     personalDeduction: int64
@@ -39,9 +44,9 @@ type TaxResult = {
     insuranceDeduction: int64
     otherDeduction: int64
     taxedIncome: int64
-    tax: float
+    tax: int64
     withhold: int64
-    pay: float
+    payResult: PayResult
 }
 
 let private money = [
@@ -64,7 +69,7 @@ let private percent = [
 ]
 
 let private tax (amount: int64) (numMonth: int) =
-    if (amount <= 0 || numMonth <= 0) then 0.
+    if (amount <= 0 || numMonth <= 0) then 0L
     else
         let n = float amount / float numMonth
         let rec loop acc i =
@@ -76,7 +81,7 @@ let private tax (amount: int64) (numMonth: int) =
                 loop
                     (acc + (float money[i] - prev) * percent[i])
                     (i + 1)
-        loop 0. 0 * float numMonth
+        int64(loop 0. 0) * int64(numMonth)
 
 module Seq =
     let count predicate xs =
@@ -109,11 +114,18 @@ let calculate (setting: Setting) (profile: Profile) =
             - personalDeduction - dependentDeduction - insuranceDeduction - otherDeduction
         |> max 0
 
-    let mustPayTax = tax taxedIncome workingMonths.Count
+    let tax = tax taxedIncome workingMonths.Count
 
     let withhold = profile.sources |> List.sumBy _.withhold
 
-    let needPayTax = mustPayTax - float withhold
+    let t = tax - withhold
+
+    let threshold = 50_000L
+
+    let payResult =
+        if t > threshold then PayMore t
+        elif t >= 0L && t <= threshold then NothingToDo t
+        else PayBack -t
 
     {
         totalIncome = totalIncome
@@ -122,7 +134,7 @@ let calculate (setting: Setting) (profile: Profile) =
         insuranceDeduction = insuranceDeduction
         otherDeduction = otherDeduction
         taxedIncome = taxedIncome
-        tax = mustPayTax
+        tax = tax
         withhold = withhold
-        pay = needPayTax
+        payResult = payResult
     }

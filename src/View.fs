@@ -156,7 +156,7 @@ let private renderResult (res: Core.TaxResult) =
             ]
             Html.tr [
                 Html.td "Số thuế phải đóng"
-                tdRight (res.tax |> roundInt64 |> formatNumber)
+                tdRight (formatNumber res.tax)
                 Html.td [
                     Html.span "[7] ="
                     Html.a [
@@ -173,11 +173,13 @@ let private renderResult (res: Core.TaxResult) =
                 Html.td "[8]"
             ]
             Html.tr [
-                let pay = res.pay |> roundInt64
-                if pay >= 0 then
-                    Html.td "❌ Số thuế còn thiếu"; tdRight (formatNumber pay); Html.td "[9] = [7]-[8]"
-                else
-                    Html.td "✅ Số thuế được hoàn"; tdRight (formatNumber -pay); Html.td "[9] = [8]-[7]"
+                match res.payResult with
+                | Core.NothingToDo x ->
+                    Html.td "👌 Không có nghĩa vụ thuế"; tdRight (formatNumber x); Html.td "[9] = [7]-[8] ≤ 50.000"
+                | Core.PayMore x ->
+                    Html.td "❌ Số thuế còn thiếu"; tdRight (formatNumber x); Html.td "[9] = [7]-[8]"
+                | Core.PayBack x ->
+                    Html.td "✅ Số thuế được hoàn"; tdRight (formatNumber x); Html.td "[9] = [8]-[7]"
             ]
         ]
     ]
